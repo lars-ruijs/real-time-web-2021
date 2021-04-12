@@ -1,4 +1,4 @@
-# ImgGuessr
+# ImgGeek
 I am planning to make a multi player game where the players take turns thinking of a topic that the other players have to guess. The player who comes up with the topic adds general pictures describing the subject. For example, when you come up with the topic of fishing, you could show pictures of water, a boat, and an aquarium. 
 
 **About this project**
@@ -6,6 +6,28 @@ I am planning to make a multi player game where the players take turns thinking 
 This project is part of the Real-Time Applications course at CMD, part of the Amsterdam University of Applied Sciences. In this course we will learn how to build a real-time application, with open connections between the client and the server.
 
 <br>
+
+## Concept sketches
+I came up with several variations on my concept before making a final choice. 
+
+**Drawing game**
+
+Below is an outline of an idea where players have to take turns redrawing an image that comes from an API. The other players must then guess what the subject of the sketch is. 
+
+![IMG_3433](https://user-images.githubusercontent.com/60745347/114394022-03262600-9b9b-11eb-8268-9f2ab1831d53.JPG)
+
+**Image hints**
+
+In this concept, players take turns thinking of a topic that the other players have to guess. The player who comes up with the topic adds general pictures describing the subject. Each player who successfully guesses the topic earns points. 
+
+![IMG_3432](https://user-images.githubusercontent.com/60745347/114394030-06b9ad00-9b9b-11eb-857c-2a4a16f5b407.JPG)
+
+**Computer player**
+
+In this concept, players play against a computer. Each round, the computer searches for an image and displays possible topics for that image below it. The player who guesses the correct topic the fastest wins the round. 
+
+![IMG_3431](https://user-images.githubusercontent.com/60745347/114394034-08837080-9b9b-11eb-9bc6-69db62e7e96b.JPG)
+
 
 ## Data flow Diagram
 []
