@@ -1,6 +1,5 @@
 // Import dotenv with ES6 modules via https://github.com/motdotla/dotenv/issues/89#issuecomment-587753552
 require('dotenv').config();
-const { request } = require('express');
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const bodyParser = require('body-parser');
@@ -133,4 +132,5 @@ io.on('connection', (socket) => {
         console.log(game);
     });
 });
+
 server.listen(port);
