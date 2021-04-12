@@ -54,6 +54,7 @@ const game = [];
 io.on('connection', (socket) => {
     console.log('a user connected');
 
+    // When new user is connected 
     socket.on('new-user', (object) => {
         const existingGame = game.map(game => game.roomId).indexOf(object.roomId);
 
@@ -61,23 +62,35 @@ io.on('connection', (socket) => {
 
         socket.join(object.roomId);
 
+        // If game does not exist
         if(existingGame == -1) {
             console.log("Game bestaat niet > maak object aan");
             console.log(socket.userName);
-            const toPush = { roomId: object.roomId, users:[{ userName: socket.userName, userId: socket.id }] };
+
+            // Create game object 
+            const toPush = { roomId: object.roomId, round: 1, questionPicker: 0, correctAnswer: '', users:[{ userName: socket.userName, userId: socket.id, points: 0 }] };
             game.push(toPush);
 
             socket.emit('connected', "You connected");
-            socket.emit('userlist', toPush.users);
+            socket.emit('questionPicker', { userInfo: toPush.users[toPush.questionPicker] });
+            socket.emit('userlist', { users: toPush.users, questionPicker: toPush.questionPicker });
         }
+        // If game does exist
         else if(existingGame > -1) {
             console.log("Game bestaat wel");
             console.log(socket.userName);
-            game[existingGame].users.push({ userName: socket.userName, userId: socket.id });
+            const currentGame = game[existingGame];
+            currentGame.users.push({ userName: socket.userName, userId: socket.id, points: 0 });
+
+            if(currentGame.users.length === 1) {
+                socket.emit('connected', "You connected");
+                socket.emit('questionPicker', { userInfo: game[existingGame].users[0] });
+            } else {
+                socket.emit('connected', `You connected. ${currentGame.users[currentGame.questionPicker].userName} is the question picker.`);
+            }
             
-            socket.emit('connected', "You connected");
-            socket.to(game[existingGame].roomId).emit('connected', `${socket.userName} connected.`);
-            io.sockets.in(game[existingGame].roomId).emit('userlist', game[existingGame].users);
+            socket.to(currentGame.roomId).emit('connected', `${socket.userName} connected.`);
+            io.sockets.in(currentGame.roomId).emit('userlist', { users: currentGame.users, questionPicker: currentGame.questionPicker });
         }
 
         console.log(game);
@@ -94,11 +107,25 @@ io.on('connection', (socket) => {
         const existingGame = game.map(game => game.roomId).indexOf(room);
 
         if(existingGame != -1) {
-            const userList = game[existingGame].users.map(user => user.userId).indexOf(socket.id);
-            game[existingGame].users.splice(userList, 1);
+            const currentGame = game[existingGame];
+            const userIndex = currentGame.users.map(user => user.userId).indexOf(socket.id);
             
-            socket.to(game[existingGame].roomId).emit('connected', `${socket.userName} disconnected.`);
-            io.sockets.in(game[existingGame].roomId).emit('userlist', game[existingGame].users);  
+            // Remove user from Game data user array
+            currentGame.users.splice(userIndex, 1);
+            
+            // Emit to all other sockets that this user left.
+            socket.to(currentGame.roomId).emit('connected', `${socket.userName} disconnected.`);
+
+            // If the leaving user was the question picker > make someone else the question picker
+            if(currentGame.questionPicker === userIndex && userIndex != 0) {
+                currentGame.questionPicker = 0;
+                io.to(currentGame.users[0].userId).emit('questionPicker', { userInfo: currentGame.users[0] });
+                socket.to(currentGame.roomId).emit('connected', `${currentGame.users[0].userName} is now the question picker!`);
+            }
+
+            // Update the scoreboard
+            io.sockets.in(currentGame.roomId).emit('userlist', { users: currentGame.users, questionPicker: currentGame.questionPicker });  
+            
             console.log(game[0].users);
         } 
 

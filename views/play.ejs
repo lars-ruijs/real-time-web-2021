@@ -2,11 +2,28 @@
 <%- include('./partials/head.ejs') %> 
 
 <main>
-    <h1>Welcome</h1>
-    <p>Connected as: <span class="username"><%= userName %></span></p>
-    <section>
-        <h3>Scoreboard:</h3>
-    </section>
+    <header>
+        <h1>Welcome</h1>
+        <p>Connected as: <span class="username"><%= userName %></span></p>
+    </header>
+    <aside>
+        <section>
+            <h3>Scoreboard:</h3>
+        </section>
+    </aside>
+    <main>
+        <section class="messages">
+            <h2>Messages:</h2>
+
+        </section>
+        <section class="form">
+            <h2>Form:</h2>
+            <form name="guessing">
+                <input type="text" placeholder="Say hi to the other players!" />
+                <input type="submit" value="Send">
+            </form>
+        </section>
+    </main>
 </main>
 
 <%# Include the header module (partial) %> 
