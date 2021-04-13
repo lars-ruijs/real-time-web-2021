@@ -7,26 +7,24 @@ const room = location.pathname.split("/")[2];
 const messageContainer = document.querySelector("section.messages");
 const formContainer = document.querySelector("section.form");
 
-const questionPickerForm = document.querySelector("form[name='question']");
+const guessingForm = document.querySelector("form[name='guessing']");
 
 socket.emit('new-user', { userName: user, roomId: room });
 
 socket.on('userlist', (dataObj) => {
   const scoreboard = document.querySelector("ul.scoreboard");
+  const round = document.querySelector("aside section p:first-of-type");
 
   if(scoreboard) {
     scoreboard.remove();
-    makeScoreBoard(dataObj);
   }
-  else {
-    makeScoreBoard(dataObj);
-  }
+  
+  round.textContent = `Round ${dataObj.round}`;
+  makeScoreBoard(dataObj);
 }); 
 
 socket.on('questionPicker', (data) => {
   console.log("Question picker", data);
-
-  const guessingForm = document.querySelector("form[name='guessing']");
 
   if(guessingForm) {
     guessingForm.classList.add("hide");
@@ -36,20 +34,62 @@ socket.on('questionPicker', (data) => {
 
 });
 
+socket.on('start-round', (data) => {
+
+  const questionPickerForm = document.querySelector("form[name='question']");
+
+  if(questionPickerForm){
+    questionPickerForm.remove();
+    guessingForm.classList.remove("hide");
+  }
+
+  addMessage("round", `${data.userName} has started the round. Start guessing now!`);
+
+  const imageContainer = document.createElement("div");
+  imageContainer.classList.add("imagecontainer");
+
+  data.images.forEach(image => {
+    const img = document.createElement("img");
+    img.src = image;
+    imageContainer.appendChild(img);
+  });
+
+  messageContainer.appendChild(imageContainer);
+});
+
 socket.on('connected', (message) => {
-    if(message.includes("disconnected")) {
-      addMessage("disconnected", message);
-    } else {
-      addMessage("connected", message);
-    }
+  if(message.includes("disconnected")) {
+    addMessage("disconnected", message);
+  } else {
+    addMessage("connected", message);
+  }
+}); 
+
+socket.on('error', (message) => {
+    addMessage("error", message);
 }); 
 
 
+socket.on('chat-message', (messageObj) => {
+  addMessage("message", messageObj.message, messageObj.userName);
+});
+
+guessingForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const message = document.querySelector("form[name='guessing'] input");
+  if(message.value) {
+    socket.emit('message', message.value);
+    message.value = '';
+  }
+});
+
+
 function makeScoreBoard(dataObj) {
-  console.log(dataObj);
   const container = document.querySelector("aside section");
+
   const ul = document.createElement("ul");
   ul.classList.add("scoreboard");
+
   dataObj.users.forEach((user, index) => {
     console.log(index);
     const li = document.createElement("li");
@@ -60,7 +100,7 @@ function makeScoreBoard(dataObj) {
     // If user is question picker
     if(index === dataObj.questionPicker) {
         userName.textContent = `👑 ${user.userName}`;
-    } else{
+    } else {
         userName.textContent = user.userName;
     }    
     div.appendChild(userName);
@@ -84,7 +124,7 @@ function makeQuestionForm() {
 
   const subjectInput = createInput("text", "Subject to guess...", false, true);
   const imgSearch1 = createInput("text", "Related image subject", false, true);
-  const imgSearch2 = createInput("text", "Related image subject", false);
+  const imgSearch2 = createInput("text", "Related image subject", false, true);
   const submit = createInput("submit", false, "Start round", false);
 
   form.appendChild(playerInfo);
@@ -97,12 +137,17 @@ function makeQuestionForm() {
   form.addEventListener("submit", questionAsked);
 }
 
-function addMessage(type, message) {
+function addMessage(type, message, userName) {
   const div = document.createElement("div");
   div.classList.add(type);
 
   const p = document.createElement("p");
-  p.textContent = message;
+
+  if(userName) {
+    p.innerHTML = `<span>${userName}:</span> ${message}`;
+  } else {
+    p.textContent = message;
+  }
 
   div.appendChild(p);
   messageContainer.appendChild(div);
@@ -129,7 +174,14 @@ function createInput(type, placeholder, value, required) {
 
 function questionAsked(event) {
   event.preventDefault();
-  console.log("Hello");
+  const subjectToGuess = document.querySelector("form[name='question'] input:first-of-type");
+  const imgKeyword1 = document.querySelector("form[name='question'] input:nth-of-type(2)");
+  const imgKeyword2 = document.querySelector("form[name='question'] input:nth-of-type(3)");
+
+  if(subjectToGuess.value && imgKeyword1.value && imgKeyword2.value) {    
+    socket.emit('question-asked', { answer: subjectToGuess.value, hint1: imgKeyword1.value, hint2: imgKeyword2.value });
+  }
+  console.log(subjectToGuess, imgKeyword1, imgKeyword2);
 }
 
 // document.querySelector('form').addEventListener('submit', (event) => {
