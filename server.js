@@ -118,7 +118,7 @@ io.on('connection', (socket) => {
                 socket.emit('connected', "You guessed the answer! +10 points for you, good job!!");
                 
                 // If less than 10 rounds
-                if(currentGame.round < 11) {
+                if(currentGame.round < 10) {
                     currentGame.round += 1;
                     const newQuestionPickerIndex = currentGame.questionPicker+1;
 
@@ -156,10 +156,10 @@ io.on('connection', (socket) => {
             // Check if all required fields are filled
             if(questionObj.answer && questionObj.hint1 && questionObj.hint2) {
                 currentGame.correctAnswer = questionObj.answer.toLowerCase();
-                //const img1 = await getData(questionObj.hint1.toLowerCase());
-                //const img2 = await getData(questionObj.hint2.toLowerCase());
-                const img1 = { results: [{urls: {thumb: "https://images.unsplash.com/photo-1564980389771-36fba50a670d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMjI4MDR8MHwxfHNlYXJjaHwxfHxkcmlua2luZ3xlbnwwfHwxfHwxNjE4MzA2Mjkw&ixlib=rb-1.2.1&q=80&w=200"}}] };
-                const img2 = { results: [{urls: {thumb: "https://images.unsplash.com/photo-1557456170-0cf4f4d0d362?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMjI4MDR8MHwxfHNlYXJjaHwxfHxsYWtlfGVufDB8fDF8fDE2MTgzMDYyOTA&ixlib=rb-1.2.1&q=80&w=200"}}] };
+                const img1 = await getData(questionObj.hint1.toLowerCase());
+                const img2 = await getData(questionObj.hint2.toLowerCase());
+                //const img1 = { results: [{urls: {thumb: "https://images.unsplash.com/photo-1564980389771-36fba50a670d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMjI4MDR8MHwxfHNlYXJjaHwxfHxkcmlua2luZ3xlbnwwfHwxfHwxNjE4MzA2Mjkw&ixlib=rb-1.2.1&q=80&w=200"}}] };
+                //const img2 = { results: [{urls: {thumb: "https://images.unsplash.com/photo-1557456170-0cf4f4d0d362?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMjI4MDR8MHwxfHNlYXJjaHwxfHxsYWtlfGVufDB8fDF8fDE2MTgzMDYyOTA&ixlib=rb-1.2.1&q=80&w=200"}}] };
     
                 // If there are image results 
                 if(img1.results[0] && img2.results[0]) {
