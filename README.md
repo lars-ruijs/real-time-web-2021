@@ -33,9 +33,65 @@ In this concept, players play against a computer. Each round, the computer searc
 ### Chosen concept
 I chose the second concept (image hints) because I think it would be an interesting project to work on. Because users are allowed to take turns in coming up with a question, the game remains exciting. In addition, the person asking the question does not know in advance which image will be selected as a hint, so he has to think carefully about which keywords to use. 
 
+<br>
 
 ## Data lifecycle Diagram
 ![image](https://user-images.githubusercontent.com/60745347/114989543-d1150c80-9e97-11eb-968b-b49cfa7563fb.png)
+
+<br>
+
+## API
+
+### Data model
+```
+API RESPONSE
++-----------------------+
+| total: Integer        |      RESULTS
+| total_pages: Integer  |     +---------------------------------+
+| results: Array        +-----+ id: String                      |
++-----------------------+     | created_at: String              |               URLS
+                              | updated_at: String              |              +-----------------+
+                              | promoted_at: String             |     +------->+ raw: String     |
+                              | width: Integer                  |     |        | full: String    |
+                              | height: Integer                 |     |        | regular: String |
+                              | color: String                   |     |        | small: String   |
+                              | blur_hash: String               |     |        | thumb: String   |
+                              | description: String             |     |        +-----------------+
+                              | alt_description: String         |     |
+                              | urls: Object                    +-----+         LINKS
+                              | links: Object                   +--------------+---------------------------+
+                              | likes: Integer                  |              | self: String              |
+                              | liked_by_user: Boolean          |              | html: String              |
+                              | current_user_collections: Array |              | download: String          |
+                              | sponsorship: Boolean            |              | download_location: String |
+                              | user: Object                    +-----+        | categories: Array         |
+                              | tags: Array                     |     |        +---------------------------+
+                              +---------------------------------+     |
+                                                                      |         USER
+                                                                      +------->+----------------------------+
+                                                                               | id: String                 |
+                                                                               | updated_at: String         |
+                                                                               | username: String           |
+                                                                               | name: String               |
+                                                                               | first_name: String         |                LINKS
+                                                                               | last_name: String          |               +-------------------+
+                                                                               | twitter_username: String   |         +---->+ self: String      |
+                                                                               | portfolio_url: String      |         |     | html: String      |
+                                                                               | bio: String                |         |     | photos: String    |
+                                                                               | location: String           |         |     | likes: String     |
+                                                                               | links: Object              +---------+     | portfolio: String |
+                                                                               | profile_image: Object      +---------+     | following: String |
+                                                                               | instagram_username: String |         |     | followers: String |
+                                                                               | total_collections: Integer |         |     +-------------------+
+                                                                               | total_likes: Integer       |         |
+                                                                               | total_photos: Integer      |         |      PROFILE_IMAGE
+                                                                               | accepted_tos: Boolean      |         |     +-------------------+
+                                                                               | for_hire: Boolean          |         +---->+ small: String     |
+                                                                               +----------------------------+               | medium: String    |
+                                                                                                                            | large: String     |
+                                                                                                                            +-------------------+
+
+```
 
 <br>
 
