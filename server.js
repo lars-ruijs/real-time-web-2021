@@ -73,6 +73,7 @@ io.on('connection', (socket) => {
 
             socket.emit('server-message', { type: "connected", message: "You connected" });
             socket.emit('questionPicker', { userInfo: toPush.users[toPush.questionPicker] });
+            socket.emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
             socket.emit('userlist', { users: toPush.users, questionPicker: toPush.questionPicker, round: toPush.round });
         }
         // If game does exist
@@ -89,7 +90,7 @@ io.on('connection', (socket) => {
                 socket.emit('server-message', { type: "connected", message: `You connected. ${currentGame.users[currentGame.questionPicker].userName} is the question picker.` });
             }
             
-            socket.to(currentGame.roomId).emit('server-message', { type: "connected", message: `${socket.userName} connected.` });
+            socket.to(currentGame.roomId).emit('server-message', { type: "connected", message: `👋 ${socket.userName} connected.` });
             io.sockets.in(currentGame.roomId).emit('userlist', { users: currentGame.users, questionPicker: currentGame.questionPicker, round: currentGame.round });
         }
 
@@ -112,10 +113,10 @@ io.on('connection', (socket) => {
                 currentGame.users[userIndex].points += 10;
 
                 // To all users, except the current socket
-                socket.to(currentGame.roomId).emit('server-message', { type: "correctAnswer", message: `${socket.userName} guessed the answer and gets +10 points!` });
+                socket.to(currentGame.roomId).emit('server-message', { type: "correctAnswer", message: `🎉  ${socket.userName} guessed the answer and gets +10 points!  🎉` });
 
                 // To the current socket
-                socket.emit('server-message', { type: "correctAnswer", message: "You guessed the answer! +10 points for you, good job!!" });
+                socket.emit('server-message', { type: "correctAnswer", message: "🎉  You guessed the answer! +10 points for you, good job!  🎉" });
                 
                 // If less than 10 rounds
                 if(currentGame.round < 10) {
@@ -131,9 +132,12 @@ io.on('connection', (socket) => {
 
                     // To the new question picker
                     io.to(currentGame.users[currentGame.questionPicker].userId).emit('questionPicker', { userInfo: currentGame.users[currentGame.questionPicker] });
+                    io.to(currentGame.users[currentGame.questionPicker].userId).emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
 
                     // To all users in this room
-                    io.to(currentGame.roomId).emit('server-message', { type: "newPicker", message: `${currentGame.users[currentGame.questionPicker].userName} is now the question picker!` });
+                    currentGame.users.map(user => user.userId).filter(userId => userId != currentGame.users[currentGame.questionPicker].userId).forEach(userId => {
+                        io.to(userId).emit('server-message', { type: "newPicker", message: `👑 ${currentGame.users[currentGame.questionPicker].userName} is now the question picker!` });
+                    });
                 }
                 else {
                     console.log("Rounds ended");
@@ -166,15 +170,15 @@ io.on('connection', (socket) => {
                     io.sockets.in(currentGame.roomId).emit('start-round', { images: [img1.results[0].urls.thumb, img2.results[0].urls.thumb], userName: socket.userName });
                 } 
                 else {
-                    socket.emit('server-message', { type: "error", message: "No images could be found for the given keywords. Change your keywords and try again." });
+                    socket.emit('server-message', { type: "error", message: "⚠️ No images could be found for the given keywords. Change your keywords and try again." });
                 }
             }
             else {
-                socket.emit('server-message', { type: "error", message: "Not all the required fields were filled in. Make sure to include a subject and define two keywords to search images for." });
+                socket.emit('server-message', { type: "error", message: "⚠️ Not all the required fields were filled in. Make sure to include a subject and define two keywords to search images for." });
             }
         }
         else {
-            socket.emit('server-message', { type: "error", message: "Wait for other players before starting a round. At least one other player is required." });
+            socket.emit('server-message', { type: "error", message: "⚠️ Wait for other players before starting a round. At least one other player is required." });
         }
 
         console.log(currentGame.correctAnswer);
@@ -191,13 +195,18 @@ io.on('connection', (socket) => {
             currentGame.users.splice(userIndex, 1);
             
             // Emit to all other sockets that this user left.
-            socket.to(currentGame.roomId).emit('server-message', { type: "disconnected", message: `${socket.userName} disconnected.`});
+            socket.to(currentGame.roomId).emit('server-message', { type: "disconnected", message: `➡️ ${socket.userName} disconnected.`});
 
             // If the leaving user was the question picker > make someone else the question picker
             if(currentGame.questionPicker === userIndex && currentGame.users.length != 0) {
                 currentGame.questionPicker = 0;
                 io.to(currentGame.users[0].userId).emit('questionPicker', { userInfo: currentGame.users[0] });
-                socket.to(currentGame.roomId).emit('server-message', { type: "newPicker", message: `${currentGame.users[0].userName} is now the question picker!` });
+                io.to(currentGame.users[0].userId).emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
+                
+                // To all users in this room
+                currentGame.users.map(user => user.userId).filter(userId => userId != currentGame.users[currentGame.questionPicker].userId).forEach(userId => {
+                    io.to(userId).emit('server-message', { type: "newPicker", message: `👑 ${currentGame.users[currentGame.questionPicker].userName} is now the question picker!` });
+                });
             }
 
             // Update the scoreboard

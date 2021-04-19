@@ -37,24 +37,21 @@ socket.on('questionPicker', (data) => {
 socket.on('start-round', (data) => {
 
   const questionPickerForm = document.querySelector("form[name='question']");
+  const questionPickerInfo = document.querySelector("section.messages div.pickerInfo");
 
-  if(questionPickerForm){
+  if(questionPickerForm && questionPickerInfo){
+    questionPickerInfo.remove();
     questionPickerForm.remove();
     guessingForm.classList.remove("hide");
   }
 
-  addMessage("round", `${data.userName} has started the round. Start guessing now!`);
+  addMessage("round", `🏁 🏁 ${data.userName} has started the round. Start guessing now! 🏁 🏁`);
 
-  const imageContainer = document.createElement("div");
-  imageContainer.classList.add("imagecontainer");
+  const hintImg1 = document.querySelector("section.hints div.imagecontainer figure:first-of-type img");
+  hintImg1.src = data.images[0];
 
-  data.images.forEach(image => {
-    const img = document.createElement("img");
-    img.src = image;
-    imageContainer.appendChild(img);
-  });
-
-  messageContainer.appendChild(imageContainer);
+  const hintImg2 = document.querySelector("section.hints div.imagecontainer figure:nth-of-type(2) img");
+  hintImg2.src = data.images[1];
 });
 
 socket.on('server-message', (messageObj) => {
@@ -115,15 +112,11 @@ function makeQuestionForm() {
   const form = document.createElement("form");
   form.setAttribute("name", "question");
 
-  const playerInfo = document.createElement("p");
-  playerInfo.textContent = "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints. ";
-
-  const subjectInput = createInput("text", "Subject to guess...", false, true);
-  const imgSearch1 = createInput("text", "Related image subject", false, true);
-  const imgSearch2 = createInput("text", "Related image subject", false, true);
+  const subjectInput = createInput("text", "Topic to guess...", false, true);
+  const imgSearch1 = createInput("text", "📸 Image keyword", false, true);
+  const imgSearch2 = createInput("text", "📸 Image keyword", false, true);
   const submit = createInput("submit", false, "Start round", false);
 
-  form.appendChild(playerInfo);
   form.appendChild(subjectInput);
   form.appendChild(imgSearch1);
   form.appendChild(imgSearch2);

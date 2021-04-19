@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
 
 ::-webkit-scrollbar {
   display: none;
@@ -16,13 +16,8 @@ div.game {
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: auto;
   grid-template-areas:
-    "header header header header header header"
-    "sidebar main main main hint hint";
-}
-
-div.game header {
-  background-color: red;
-  grid-area: header;
+    "sidebar main main main hint hint"
+    "form form form form form form";
 }
 
 div.game aside {
@@ -87,13 +82,56 @@ div.message p span {
 }
 
 div.connected {
-  margin: 0 auto;
+  text-align: center;
+  color: #bab7e4;
+}
+
+div.disconnected {
+  text-align: center;
+  color: #908dbf;
+  font-style: italic;
+}
+
+div.newPicker {
+  margin: 1em auto;
   background-color: #4f4b91;
-  color: #1b1b26;
+  color: #ffffff;
+  font-weight: 600;
   text-align: center;
   padding: 0.5em 2em;
   border-radius: 99em;
   width: max-content;
+}
+
+div.correctAnswer,
+div.error {
+  margin: 1em auto;
+  background-color: #48aa50;
+  color: #ffffff;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5em 2em;
+  border-radius: 99em;
+}
+
+div.error {
+  background-color: #ad3030;
+}
+
+div.round,
+div.pickerInfo {
+  margin: 1em auto;
+  background-color: #4c4977;
+  color: #ffffff;
+  font-weight: 700;
+  text-align: center;
+  padding: 0.5em 2em;
+  border-radius: 1.5em;
+}
+
+div.pickerInfo {
+  text-align: left;
+  font-weight: 400;
 }
 
 div.game section.hints {
@@ -102,7 +140,7 @@ div.game section.hints {
 }
 
 div.game div.imagecontainer {
-  margin: 2em auto;
+  margin: 3em auto;
   background-color: #3b377d;
   padding: 2em;
   border-radius: 3em;
@@ -127,28 +165,32 @@ div.game div.imagecontainer figure img {
 
 div.game section.form {
   background-color: #2d2a63;
-  padding: 1.5em 3em;
+  padding: 1.5em 0;
   position: fixed;
   bottom: 0;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  grid-area: form;
 }
 
 div.game section.form input[type="text"] {
   color: white;
   font-family: "Poppins", sans-serif;
   font-size: 1em;
-  background-color: #363270;
+  background-color: #3f3a80;
   border: none;
   outline: none;
   padding: 1em 2em;
-  border-radius: 99em;
+  border-radius: 1.5em;
+  margin-right: 1em;
 }
 
 div.game section.form input[type="submit"] {
   appearance: none;
   -webkit-appearance: none;
   background-color: #7a59ff;
-  border-radius: 99em;
+  border-radius: 1.5em;
   display: inline-block;
   cursor: pointer;
   color: #ffffff;
@@ -163,15 +205,79 @@ div.game section.form input[type="submit"] {
 }
 
 div.game section.form form[name="guessing"] input[type="text"] {
-  width: 70%;
+  width: 55vw;
+}
+
+div.game section.form form[name="question"] input[type="text"]:first-of-type {
+  width: 20vw;
 }
 
 ::placeholder {
   /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: #908dbf;
+  color: #9f9bd1;
   opacity: 1; /* Firefox */
 }
 
 .hide {
   display: none;
+}
+
+@media screen and (max-width: 945px) {
+  div.game {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "sidebar sidebar"
+      "main hint"
+      "form form";
+  }
+
+  div.game section.messages {
+    min-height: 50vh;
+    max-height: 50vh;
+    border-radius: 3em 0 0 0;
+    padding-bottom: 7em;
+  }
+
+  div.game aside {
+    font-size: smaller;
+    width: auto;
+    height: auto;
+    border-radius: 0 0 3em 3em;
+  }
+
+  div.game div.imagecontainer figure {
+    height: 40vw;
+  }
+
+  div.game section.hints {
+    border-radius: 0 3em 0 0;
+  }
+
+  div.game div.imagecontainer {
+    padding: 0;
+    background-color: #272452;
+  }
+
+  div.game section.form {
+    padding: 1em 2em;
+  }
+}
+
+@media screen and (min-width: 1500px) {
+  div.game section.messages {
+    min-height: 86vh;
+    max-height: 86vh;
+  }
+
+  div.game div.imagecontainer figure {
+    height: 18em;
+  }
+
+  div.game div.imagecontainer {
+    max-width: 50%;
+  }
+
+  div.game aside {
+    width: auto;
+  }
 }
