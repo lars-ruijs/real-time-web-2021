@@ -2,29 +2,31 @@
 <%- include('./partials/head.ejs') %> 
 
 <div class="game">
-    <header>
-        <h1>Welcome</h1>
-        <p>Connected as: <span class="username"><%= userName %></span></p>
-    </header>
     <aside>
         <section>
-            <h3>Scoreboard:</h3>
             <p>Round 1</p>
+            <h3>Scoreboard</h3>
+            <p>Connected as: <span class="username"><%= userName %></span></p>
         </section>
     </aside>
-    <main>
-        <section class="messages">
-            <h2>Messages:</h2>
-
-        </section>
-        <section class="form">
-            <h2>Form:</h2>
-            <form name="guessing">
-                <input type="text" placeholder="Say hi to the other players!" />
-                <input type="submit" value="Send">
-            </form>
-        </section>
-    </main>
+    <section class="messages">
+    </section>
+    <section class="hints">
+        <div class="imagecontainer">
+            <figure>
+                <img src="https://images.unsplash.com/photo-1564980389771-36fba50a670d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMjI4MDR8MHwxfHNlYXJjaHwxfHxkcmlua2luZ3xlbnwwfHwxfHwxNjE4MzA2Mjkw&ixlib=rb-1.2.1&q=80&w=200" alt="">
+            </figure>
+            <figure>
+                <img src="https://images.unsplash.com/photo-1564980389771-36fba50a670d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMjI4MDR8MHwxfHNlYXJjaHwxfHxkcmlua2luZ3xlbnwwfHwxfHwxNjE4MzA2Mjkw&ixlib=rb-1.2.1&q=80&w=200" alt="">
+            </figure>
+        </div>
+    </section>
+    <section class="form">
+        <form name="guessing">
+            <input type="text" placeholder="Say hi to the other players!" />
+            <input type="submit" value="Send">
+        </form>
+    </section>
 </div>
 
 <%# Include the header module (partial) %> 

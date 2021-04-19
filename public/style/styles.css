@@ -1,3 +1,177 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap");
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  margin: 0;
+  background-color: #2d2a63;
+  color: white;
+  font-family: "Poppins", sans-serif;
+}
+
+div.game {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  grid-template-areas:
+    "header header header header header header"
+    "sidebar main main main hint hint";
+}
+
+div.game header {
+  background-color: red;
+  grid-area: header;
+}
+
+div.game aside {
+  background-color: #363270;
+  width: 12em;
+  padding: 1em 2em;
+  grid-area: sidebar;
+  border-radius: 0 8em 0 0;
+}
+
+div.game aside ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+div.game aside ul li p:first-of-type {
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+div.game aside ul li p:nth-of-type(2) {
+  font-weight: 300;
+  margin-top: 0;
+  color: #908dbf;
+}
+
+div.game aside p:first-of-type:not(li p) {
+  text-transform: uppercase;
+  font-size: 1.5em;
+  color: #908dbf;
+  margin: 1em 0 0 0;
+}
+
+div.game aside h3 {
+  letter-spacing: 0.04em;
+  font-size: 1.5em;
+  margin: 1em 0 0 0;
+}
+
+div.game aside p:nth-of-type(2):not(li p) {
+  margin: 0;
+  font-weight: 300;
+  color: #908dbf;
+}
+
+div.game section.messages {
+  background-color: #272452;
+  min-height: 75vh;
+  max-height: 75vh;
+  height: 100%;
+  overflow-y: scroll;
+  padding: 4em 1em 1em 3em;
+  margin-bottom: 2em;
+  grid-area: main;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  border-radius: 8em 0 0 0;
+}
+
+div.message p span {
+  font-weight: 700;
+}
+
+div.connected {
+  margin: 0 auto;
+  background-color: #4f4b91;
+  color: #1b1b26;
+  text-align: center;
+  padding: 0.5em 2em;
+  border-radius: 99em;
+  width: max-content;
+}
+
+div.game section.hints {
+  grid-area: hint;
+  background-color: #272452;
+}
+
+div.game div.imagecontainer {
+  margin: 2em auto;
+  background-color: #3b377d;
+  padding: 2em;
+  border-radius: 3em;
+  max-width: 60%;
+}
+
+div.game div.imagecontainer figure {
+  height: 13em;
+  margin: 0;
+}
+
+div.game div.imagecontainer figure:nth-of-type(2) {
+  margin-top: 1em;
+}
+
+div.game div.imagecontainer figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5em;
+}
+
+div.game section.form {
+  background-color: #2d2a63;
+  padding: 1.5em 3em;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+div.game section.form input[type="text"] {
+  color: white;
+  font-family: "Poppins", sans-serif;
+  font-size: 1em;
+  background-color: #363270;
+  border: none;
+  outline: none;
+  padding: 1em 2em;
+  border-radius: 99em;
+}
+
+div.game section.form input[type="submit"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #7a59ff;
+  border-radius: 99em;
+  display: inline-block;
+  cursor: pointer;
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  padding: 1.2em 2em;
+  text-decoration: none;
+  text-transform: uppercase;
+  outline: none;
+  border: none;
+  font-size: 1em;
+}
+
+div.game section.form form[name="guessing"] input[type="text"] {
+  width: 70%;
+}
+
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #908dbf;
+  opacity: 1; /* Firefox */
+}
+
 .hide {
   display: none;
 }
