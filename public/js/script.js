@@ -57,12 +57,8 @@ socket.on('start-round', (data) => {
   messageContainer.appendChild(imageContainer);
 });
 
-socket.on('connected', (message) => {
-  if(message.includes("disconnected")) {
-    addMessage("disconnected", message);
-  } else {
-    addMessage("connected", message);
-  }
+socket.on('server-message', (messageObj) => {
+  addMessage(messageObj.type, messageObj.message);
 }); 
 
 socket.on('error', (message) => {
@@ -151,6 +147,7 @@ function addMessage(type, message, userName) {
 
   div.appendChild(p);
   messageContainer.appendChild(div);
+  messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
 function createInput(type, placeholder, value, required) {
