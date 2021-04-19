@@ -7,6 +7,9 @@ const room = location.pathname.split("/")[2];
 const messageContainer = document.querySelector("section.messages");
 const formContainer = document.querySelector("section.form");
 
+const hintImg1 = document.querySelector("section.hints div.imagecontainer figure:first-of-type img");
+const hintImg2 = document.querySelector("section.hints div.imagecontainer figure:nth-of-type(2) img");
+
 const guessingForm = document.querySelector("form[name='guessing']");
 
 socket.emit('new-user', { userName: user, roomId: room });
@@ -24,7 +27,6 @@ socket.on('userlist', (dataObj) => {
 }); 
 
 socket.on('questionPicker', (data) => {
-  console.log("Question picker", data);
 
   if(guessingForm) {
     guessingForm.classList.add("hide");
@@ -47,14 +49,17 @@ socket.on('start-round', (data) => {
 
   addMessage("round", `🏁 🏁 ${data.userName} has started the round. Start guessing now! 🏁 🏁`);
 
-  const hintImg1 = document.querySelector("section.hints div.imagecontainer figure:first-of-type img");
   hintImg1.src = data.images[0];
-
-  const hintImg2 = document.querySelector("section.hints div.imagecontainer figure:nth-of-type(2) img");
   hintImg2.src = data.images[1];
 });
 
 socket.on('server-message', (messageObj) => {
+
+  if(messageObj.type === "newPicker") {
+    hintImg1.src = "/images/guessimage.png";
+    hintImg2.src = "/images/questionmarks.png";
+  }
+  
   addMessage(messageObj.type, messageObj.message);
 }); 
 

@@ -12,7 +12,7 @@
         <h2>Join the game:</h2>
         <p>To join the game, please enter your name:</p>
         <form action="<%= `/room/${roomNum}/play` %>" method="POST">
-            <input type="text" name="username" id="username" autocomplete="off" placeholder="Enter your username...">
+            <input type="text" name="username" id="username" autocomplete="off" placeholder="Enter your username..." required>
             <input type="submit" value="Join game!">
         </form>
     </section>

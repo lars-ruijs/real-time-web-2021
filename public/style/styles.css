@@ -43,7 +43,7 @@ main section.create {
 }
 
 main section.create h2 {
-  margin: 3em 0 0 0;
+  margin: 2em 0 0 0;
 }
 
 div.game {
@@ -264,7 +264,35 @@ div.game section.form form[name="question"] input[type="text"]:first-of-type {
   display: none;
 }
 
-@media screen and (max-width: 945px) {
+@media screen and (max-width: 940px) {
+  main {
+    display: block;
+  }
+
+  main section.intro {
+    width: auto;
+    height: max-content;
+    padding: 2em 7vw;
+  }
+
+  main section.intro h1 {
+    font-size: 3em;
+    margin: 0;
+  }
+
+  main section.intro p {
+    width: auto;
+  }
+
+  main section.create {
+    width: auto;
+    padding: 2em 7vw;
+  }
+
+  main section.create h2 {
+    margin: 2em 0 0 0;
+  }
+
   div.game {
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
