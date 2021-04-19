@@ -11,6 +11,41 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
+main {
+  display: flex;
+}
+
+main section.intro {
+  width: 70%;
+  height: 92vh;
+  background: rgb(39, 36, 82);
+  background: linear-gradient(
+    90deg,
+    rgba(39, 36, 82, 1) 0%,
+    rgba(84, 77, 175, 1) 100%
+  );
+  padding: 4em 0 0 4em;
+}
+
+main section.intro h1 {
+  font-size: 6em;
+  margin: 0;
+}
+
+main section.intro p {
+  width: 50%;
+}
+
+main section.create {
+  background-color: #363270;
+  padding: 2em 4em;
+  width: 30%;
+}
+
+main section.create h2 {
+  margin: 3em 0 0 0;
+}
+
 div.game {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -174,7 +209,7 @@ div.game section.form {
   grid-area: form;
 }
 
-div.game section.form input[type="text"] {
+input[type="text"] {
   color: white;
   font-family: "Poppins", sans-serif;
   font-size: 1em;
@@ -186,7 +221,14 @@ div.game section.form input[type="text"] {
   margin-right: 1em;
 }
 
-div.game section.form input[type="submit"] {
+section.create input[type="text"] {
+  display: block;
+  width: 15em;
+  margin: 2em 0 1.5em 0;
+}
+
+input[type="submit"],
+a {
   appearance: none;
   -webkit-appearance: none;
   background-color: #7a59ff;

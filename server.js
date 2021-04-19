@@ -30,6 +30,9 @@ app
     .get("/", (req, res) => {
         res.render("index", { rtw: false, roomNum: uuidv4() });
     })
+    .post("/play", (req, res) => {
+        res.redirect(`/room/${req.body.gamecode}`);
+    })
     .get("/room/:room", (req, res) => {
         res.render("join", { rtw: false, roomNum: req.params.room });
     })

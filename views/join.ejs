@@ -2,16 +2,20 @@
 <%- include('./partials/head.ejs') %> 
 
 <main>
-    <h1>Room created!</h1>
-    <p>To share this room with your friends, copy the code below and share it!</p>
-    <p><%= roomNum %></p>
+    <section class="intro">
+        <h1>Start playing!</h1>
+        <p>To share this room with your friends, copy the code below and share it!</p>
+        <input type="text" value="<%= roomNum %>" placeholder="<%= roomNum %>" readonly>
+    </section>
 
-    <h2>Join the game:</h2>
-    <p>To join the game, please enter your name:</p>
-    <form action="<%= `/room/${roomNum}/play` %>" method="POST">
-        <input type="text" name="username" id="username" autocomplete="off">
-        <button>Send</button>
-    </form>
+    <section class="create">
+        <h2>Join the game:</h2>
+        <p>To join the game, please enter your name:</p>
+        <form action="<%= `/room/${roomNum}/play` %>" method="POST">
+            <input type="text" name="username" id="username" autocomplete="off" placeholder="Enter your username...">
+            <input type="submit" value="Join game!">
+        </form>
+    </section>
 </main>
 
 <%# Include the header module (partial) %> 

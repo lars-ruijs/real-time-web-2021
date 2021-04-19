@@ -2,8 +2,23 @@
 <%- include('./partials/head.ejs') %> 
 
 <main>
-    <h1>Welcome to sockets!</h1>
-    <a href="<%= `/room/${roomNum}` %>">Create a room</a>
+    <section class="intro">
+        <h1>ImgGeek</h1>
+        <p>In ImgGeek, the goal is to guess the word someone has in mind as quickly as possible. You are shown two images that count as hints.</p>
+    </section>
+    <section class="create">
+        <h2>Create a room</h2>
+        <p>Start playing ImgGeek with your friends! Get your own private room here and share it with others.</p>
+        <a href="<%= `/room/${roomNum}` %>">Create a room!</a>
+
+        <h2>Join a room</h2>
+        <p>Did you receive a game code? Then enter it below to join the room and start playing!</p>
+        <form action="/play" method="POST">
+            <input type="text" name="gamecode" id="gamecode" placeholder="Enter your gamecode">
+            <input type="submit" value="Join room!">
+        </form>
+
+    </section>
 </main>
 
 <%# Include the header module (partial) %> 
