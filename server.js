@@ -122,8 +122,8 @@ io.on('connection', (socket) => {
                 // To the current socket
                 socket.emit('server-message', { type: "correctAnswer", message: "🎉  You guessed the answer! +10 points for you, good job!  🎉" });
                 
-                // If less than 10 rounds
-                if(currentGame.round < 10) {
+                // If less than 5 rounds
+                if(currentGame.round < 5) {
                     currentGame.round += 1;
                     const newQuestionPickerIndex = currentGame.questionPicker+1;
 
@@ -144,7 +144,8 @@ io.on('connection', (socket) => {
                     });
                 }
                 else {
-                    console.log("Rounds ended");
+                    io.sockets.in(currentGame.roomId).emit('game-ended', { users: currentGame.users }); 
+                    game.splice(getRoomInfo(socket), 1);
                 }
 
                 // To all users in the room > update the score board
@@ -195,28 +196,30 @@ io.on('connection', (socket) => {
             const currentGame = game[existingGame];
             const userIndex = getUserIndex(currentGame, socket);
             
-            // Remove user from Game data user array
-            currentGame.users.splice(userIndex, 1);
-            
-            // Emit to all other sockets that this user left.
-            socket.to(currentGame.roomId).emit('server-message', { type: "disconnected", message: `➡️ ${socket.userName} disconnected.`});
+            socket.leave(currentGame.roomId);
 
-            // If the leaving user was the question picker > make someone else the question picker
-            if(currentGame.questionPicker === userIndex && currentGame.users.length != 0) {
-                currentGame.questionPicker = 0;
-                io.to(currentGame.users[0].userId).emit('questionPicker', { userInfo: currentGame.users[0] });
-                io.to(currentGame.users[0].userId).emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
+            if(userIndex != -1) {
+                // Remove user from Game data user array
+                currentGame.users.splice(userIndex, 1);
                 
-                // To all users in this room
-                currentGame.users.map(user => user.userId).filter(userId => userId != currentGame.users[currentGame.questionPicker].userId).forEach(userId => {
-                    io.to(userId).emit('server-message', { type: "newPicker", message: `👑 ${currentGame.users[currentGame.questionPicker].userName} is now the question picker!` });
-                });
-            }
+                // Emit to all other sockets that this user left.
+                socket.to(currentGame.roomId).emit('server-message', { type: "disconnected", message: `➡️ ${socket.userName} disconnected.`});
 
-            // Update the scoreboard
-            io.sockets.in(currentGame.roomId).emit('userlist', { users: currentGame.users, questionPicker: currentGame.questionPicker, round: currentGame.round });  
-            
-            console.log(game[0].users);
+                // If the leaving user was the question picker > make someone else the question picker
+                if(currentGame.questionPicker === userIndex && currentGame.users.length != 0) {
+                    currentGame.questionPicker = 0;
+                    io.to(currentGame.users[0].userId).emit('questionPicker', { userInfo: currentGame.users[0] });
+                    io.to(currentGame.users[0].userId).emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
+                    
+                    // To all users in this room
+                    currentGame.users.map(user => user.userId).filter(userId => userId != currentGame.users[currentGame.questionPicker].userId).forEach(userId => {
+                        io.to(userId).emit('server-message', { type: "newPicker", message: `👑 ${currentGame.users[currentGame.questionPicker].userName} is now the question picker!` });
+                    });
+                }
+
+                // Update the scoreboard
+                io.sockets.in(currentGame.roomId).emit('userlist', { users: currentGame.users, questionPicker: currentGame.questionPicker, round: currentGame.round });  
+            }
         } 
 
         console.log('user disconnected');
