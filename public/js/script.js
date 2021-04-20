@@ -59,7 +59,7 @@ socket.on('server-message', (messageObj) => {
     hintImg1.src = "/images/guessimage.png";
     hintImg2.src = "/images/questionmarks.png";
   }
-  
+
   addMessage(messageObj.type, messageObj.message);
 }); 
 
@@ -67,9 +67,61 @@ socket.on('error', (message) => {
     addMessage("error", message);
 }); 
 
-
 socket.on('chat-message', (messageObj) => {
   addMessage("message", messageObj.message, messageObj.userName);
+});
+
+socket.on('game-ended', (scores) => {
+
+  scores.users.sort(function (a, b) {
+    return b.points - a.points;
+  });
+
+  const scoreScreen = document.querySelector("section.end-scores");
+  const winnerTitle = document.querySelector("section.end-scores h2:nth-of-type(2)");
+  winnerTitle.textContent = `${scores.users[0].userName} won the game!`;
+
+  const scoreList = document.querySelector("section.end-scores ol");
+  scores.users.forEach(user => {
+    const li = document.createElement("li");
+    li.textContent = `${user.userName} • ${user.points} points`;
+    scoreList.appendChild(li);
+  });
+
+  scoreScreen.style.height = "100%";
+
+  const myCanvas = document.createElement('canvas');
+  scoreScreen.appendChild(myCanvas);
+
+  const myConfetti = confetti.create(myCanvas, {
+    useWorker: true,
+    resize: true
+  });
+
+  const duration = 8 * 1000;
+  const end = Date.now() + duration;
+
+  (function frame() {
+    // launch a few confetti from the left edge
+    myConfetti({
+      particleCount: 7,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 }
+    });
+    // and launch a few from the right edge
+    myConfetti({
+      particleCount: 7,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 }
+    });
+
+    // keep going until we are out of time
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  }());
 });
 
 guessingForm.addEventListener('submit', (event) => {

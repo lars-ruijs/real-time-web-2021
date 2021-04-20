@@ -264,6 +264,63 @@ div.game section.form form[name="question"] input[type="text"]:first-of-type {
   display: none;
 }
 
+section.end-scores {
+  height: 0;
+  width: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.85);
+  overflow-y: hidden;
+  transition: 0.5s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+section.end-scores canvas {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+section.end-scores h2 {
+  font-size: 3em;
+  margin: 0;
+}
+
+section.end-scores p:first-of-type {
+  margin: 0;
+  opacity: 0.7;
+}
+
+section.end-scores ol {
+  list-style: none;
+  counter-reset: score-counter;
+  padding: 0;
+}
+
+section.end-scores ol li {
+  counter-increment: score-counter;
+}
+
+section.end-scores ol li::before {
+  content: "#" counter(score-counter);
+  font-weight: 700;
+  margin-right: 0.3em;
+}
+
+section.end-scores a {
+  width: fit-content;
+  margin-top: 1em;
+}
+
 @media screen and (max-width: 940px) {
   main {
     display: block;
@@ -277,7 +334,6 @@ div.game section.form form[name="question"] input[type="text"]:first-of-type {
 
   main section.intro h1 {
     font-size: 3em;
-    margin: 0;
   }
 
   main section.intro p {
@@ -287,10 +343,6 @@ div.game section.form form[name="question"] input[type="text"]:first-of-type {
   main section.create {
     width: auto;
     padding: 2em 7vw;
-  }
-
-  main section.create h2 {
-    margin: 2em 0 0 0;
   }
 
   div.game {
