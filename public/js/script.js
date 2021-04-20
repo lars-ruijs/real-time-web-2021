@@ -108,14 +108,14 @@ socket.on('game-ended', (scores) => {
     myConfetti({
       particleCount: 7,
       angle: 60,
-      spread: 65,
+      spread: 75,
       origin: { x: 0 }
     });
     // and launch a few from the right edge
     myConfetti({
       particleCount: 7,
       angle: 120,
-      spread: 65,
+      spread: 75,
       origin: { x: 1 }
     });
 
