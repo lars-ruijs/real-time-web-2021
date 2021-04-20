@@ -45,9 +45,11 @@ socket.on('start-round', (data) => {
     questionPickerInfo.remove();
     questionPickerForm.remove();
     guessingForm.classList.remove("hide");
+    addMessage("round", `🏁 🏁 You started the round. Others can start guessing now! 🏁 🏁`);
   }
-
-  addMessage("round", `🏁 🏁 ${data.userName} has started the round. Start guessing now! 🏁 🏁`);
+  else {
+    addMessage("round", `🏁 🏁 ${data.userName} has started the round. Start guessing now! 🏁 🏁`);
+  }
 
   hintImg1.src = data.images[0];
   hintImg2.src = data.images[1];
@@ -106,14 +108,14 @@ socket.on('game-ended', (scores) => {
     myConfetti({
       particleCount: 7,
       angle: 60,
-      spread: 55,
+      spread: 65,
       origin: { x: 0 }
     });
     // and launch a few from the right edge
     myConfetti({
       particleCount: 7,
       angle: 120,
-      spread: 55,
+      spread: 65,
       origin: { x: 1 }
     });
 
