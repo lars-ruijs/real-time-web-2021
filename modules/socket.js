@@ -1,4 +1,4 @@
-const { getData } = require('./helpers');
+const { getData, getRoomInfo, getUserIndex } = require('./helpers');
 
 const game = [];
 
@@ -6,25 +6,25 @@ function useSockets(server) {
     const io = require('socket.io')(server);
 
     io.on('connection', (socket) => {
-        console.log('a user connected');
     
         // When new user is connected 
         socket.on('new-user', (object) => {
+
+            // Get game data index for current roomId
             const existingGame = game.map(game => game.roomId).indexOf(object.roomId);
     
+            // Save the userName to this socket & join this room
             socket.userName = object.userName;
-    
             socket.join(object.roomId);
     
             // If game does not exist
             if(existingGame == -1) {
-                console.log("Game bestaat niet > maak object aan");
-                console.log(socket.userName);
     
-                // Create game object 
+                // Create game object & push it to game data array
                 const toPush = { roomId: object.roomId, round: 1, questionPicker: 0, correctAnswer: '', users:[{ userName: socket.userName, userId: socket.id, points: 0 }] };
                 game.push(toPush);
     
+                // Emit a connected message > make this user the question picker > update the userlist (scoreboard)
                 socket.emit('server-message', { type: "connected", message: "You connected" });
                 socket.emit('questionPicker', { userInfo: toPush.users[toPush.questionPicker] });
                 socket.emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
@@ -32,11 +32,13 @@ function useSockets(server) {
             }
             // If game does exist
             else if(existingGame > -1) {
-                console.log("Game bestaat wel");
-                console.log(socket.userName);
+                // Get game data for this room
                 const currentGame = game[existingGame];
+
+                // Add this user to the game data for this room
                 currentGame.users.push({ userName: socket.userName, userId: socket.id, points: 0 });
     
+                // If it's the first user > make him/her the question picker
                 if(currentGame.users.length === 1) {
                     socket.emit('server-message', { type: "connected", message: "You connected" });
                     socket.emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
@@ -45,25 +47,26 @@ function useSockets(server) {
                     socket.emit('server-message', { type: "connected", message: `You connected. ${currentGame.users[currentGame.questionPicker].userName} is the question picker.` });
                 }
                 
+                // Send connected message to others and update userlist for everyone in this room
                 socket.to(currentGame.roomId).emit('server-message', { type: "connected", message: `👋 ${socket.userName} connected.` });
                 io.sockets.in(currentGame.roomId).emit('userlist', { users: currentGame.users, questionPicker: currentGame.questionPicker, round: currentGame.round });
             }
-    
-            console.log(game);
-            console.log(game[0].users);
         });
         
+        // When a message was sent
         socket.on('message', (message) => {
+            // Get game data for this room & index of user in the user array
             const currentGame = game[getRoomInfo(socket)];
             const userIndex = getUserIndex(currentGame, socket);
     
-            // Check if user is question picker
+            // Check if user is question picker > send message to all sockets in the room
             if(userIndex === currentGame.questionPicker) {
                 io.sockets.in(currentGame.roomId).emit('chat-message', { userName: socket.userName, message: message });
             } 
             else {
                 // Check if message is the correct answer
                 if(message.toLowerCase() === currentGame.correctAnswer) {
+                    // Set correctAnswer to empty string > add 10 points to the current user
                     currentGame.correctAnswer = '';
                     currentGame.users[userIndex].points += 10;
     
@@ -95,6 +98,7 @@ function useSockets(server) {
                         });
                     }
                     else {
+                        // If more than 5 rounds, end the game and remove game data.
                         io.sockets.in(currentGame.roomId).emit('game-ended', { users: currentGame.users }); 
                         game.splice(getRoomInfo(socket), 1);
                     }
@@ -109,19 +113,24 @@ function useSockets(server) {
             }
         });
     
+        // When question picker asks a question
         socket.on('question-asked', async (questionObj) => {
             const currentGame = game[getRoomInfo(socket)];
     
+            // If question picker is not the only player
             if(currentGame.users.length > 1) {
+
                 // Check if all required fields are filled
                 if(questionObj.answer && questionObj.hint1 && questionObj.hint2) {
+                    
+                    // Set the answer to the game data and fetch images
                     currentGame.correctAnswer = questionObj.answer.toLowerCase();
                     const img1 = await getData(questionObj.hint1.toLowerCase());
                     const img2 = await getData(questionObj.hint2.toLowerCase());
                     //const img1 = { results: [{urls: {thumb: "https://images.unsplash.com/photo-1564980389771-36fba50a670d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMjI4MDR8MHwxfHNlYXJjaHwxfHxkcmlua2luZ3xlbnwwfHwxfHwxNjE4MzA2Mjkw&ixlib=rb-1.2.1&q=80&w=200"}}] };
                     //const img2 = { results: [{urls: {thumb: "https://images.unsplash.com/photo-1557456170-0cf4f4d0d362?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMjI4MDR8MHwxfHNlYXJjaHwxfHxsYWtlfGVufDB8fDF8fDE2MTgzMDYyOTA&ixlib=rb-1.2.1&q=80&w=200"}}] };
         
-                    // If there are image results 
+                    // If there are image results > Start the round 
                     if(img1.results[0] && img2.results[0]) {
                         io.sockets.in(currentGame.roomId).emit('start-round', { images: [img1.results[0].urls.thumb, img2.results[0].urls.thumb], userName: socket.userName });
                     } 
@@ -134,19 +143,21 @@ function useSockets(server) {
                 }
             }
             else {
+                // A minimum of 2 players in a room
                 socket.emit('server-message', { type: "error", message: "⚠️ Wait for other players before starting a round. At least one other player is required." });
             }
-    
-            console.log(currentGame.correctAnswer);
         });
         
+        // When a user is disconnecting from a room
         socket.on('disconnecting', () => {
             const existingGame = getRoomInfo(socket);
     
+            // If game exists
             if(existingGame != -1) {
                 const currentGame = game[existingGame];
                 const userIndex = getUserIndex(currentGame, socket);
                 
+                // Leave current room
                 socket.leave(currentGame.roomId);
     
                 if(userIndex != -1) {
@@ -172,22 +183,8 @@ function useSockets(server) {
                     io.sockets.in(currentGame.roomId).emit('userlist', { users: currentGame.users, questionPicker: currentGame.questionPicker, round: currentGame.round });  
                 }
             } 
-    
-            console.log('user disconnected');
-            console.log(game);
         });
     });
-}
-
-function getRoomInfo(socket) {
-    const room = Array.from(socket.rooms)[1];
-    const existingGame = game.map(game => game.roomId).indexOf(room);
-    return existingGame;
-}
-
-function getUserIndex(currentGame, socket) {
-    const userIndex = currentGame.users.map(user => user.userId).indexOf(socket.id);
-    return userIndex;
 }
 
 // Export socket module

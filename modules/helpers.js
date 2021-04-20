@@ -12,6 +12,19 @@ async function getData(keyword) {
 function isValid(str){
     return !/[~`!#$%\^&*+=\\[\]\\';,/{}|\\":<>\?]/g.test(str);
 }
-  
-module.exports = { getData, isValid };
+ 
+// Get index of current room from socket
+function getRoomInfo(socket) {
+    const room = Array.from(socket.rooms)[1];
+    const existingGame = game.map(game => game.roomId).indexOf(room);
+    return existingGame;
+}
+
+// Get index of user data array for socket 
+function getUserIndex(currentGame, socket) {
+    const userIndex = currentGame.users.map(user => user.userId).indexOf(socket.id);
+    return userIndex;
+}
+
+module.exports = { getData, isValid, getRoomInfo, getUserIndex };
   
