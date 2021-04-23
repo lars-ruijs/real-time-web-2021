@@ -9,6 +9,7 @@ body {
   background-color: #2d2a63;
   color: white;
   font-family: "Poppins", sans-serif;
+  hyphens: auto;
 }
 
 main {
@@ -61,11 +62,16 @@ div.game aside {
   padding: 1em 2em;
   grid-area: sidebar;
   border-radius: 0 8em 0 0;
+  min-height: 85vh;
+  max-height: 85vh;
+  height: 100%;
+  overflow-y: scroll;
 }
 
 div.game aside ul {
   list-style-type: none;
   padding: 0;
+  margin-bottom: 3em;
 }
 
 div.game aside ul li p:first-of-type {
@@ -365,6 +371,8 @@ section.end-scores a {
     width: auto;
     height: auto;
     border-radius: 0 0 3em 3em;
+    min-height: 1vh;
+    max-height: 100vh;
   }
 
   div.game div.imagecontainer figure {
@@ -401,5 +409,7 @@ section.end-scores a {
 
   div.game aside {
     width: auto;
+    min-height: 95vh;
+    max-height: 95vh;
   }
 }
