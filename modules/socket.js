@@ -56,7 +56,7 @@ function useSockets(server) {
         // When a message was sent
         socket.on('message', (message) => {
             // Get game data for this room & index of user in the user array
-            const currentGame = game[getRoomInfo(socket)];
+            const currentGame = game[getRoomInfo(socket, game)];
             const userIndex = getUserIndex(currentGame, socket);
     
             // Check if user is question picker > send message to all sockets in the room
@@ -100,7 +100,7 @@ function useSockets(server) {
                     else {
                         // If more than 5 rounds, end the game and remove game data.
                         io.sockets.in(currentGame.roomId).emit('game-ended', { users: currentGame.users }); 
-                        game.splice(getRoomInfo(socket), 1);
+                        game.splice(getRoomInfo(socket, game), 1);
                     }
     
                     // To all users in the room > update the score board
@@ -115,7 +115,7 @@ function useSockets(server) {
     
         // When question picker asks a question
         socket.on('question-asked', async (questionObj) => {
-            const currentGame = game[getRoomInfo(socket)];
+            const currentGame = game[getRoomInfo(socket, game)];
     
             // If question picker is not the only player
             if(currentGame.users.length > 1) {
@@ -150,7 +150,7 @@ function useSockets(server) {
         
         // When a user is disconnecting from a room
         socket.on('disconnecting', () => {
-            const existingGame = getRoomInfo(socket);
+            const existingGame = getRoomInfo(socket, game);
     
             // If game exists
             if(existingGame != -1) {

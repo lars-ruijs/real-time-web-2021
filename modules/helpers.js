@@ -14,7 +14,7 @@ function isValid(str){
 }
  
 // Get index of current room from socket
-function getRoomInfo(socket) {
+function getRoomInfo(socket, game) {
     const room = Array.from(socket.rooms)[1];
     const existingGame = game.map(game => game.roomId).indexOf(room);
     return existingGame;
