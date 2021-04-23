@@ -35,14 +35,70 @@ I chose the second concept (image hints) because I think it would be an interest
 
 <br>
 
-## Data lifecycle Diagram
+## 🧞 Wishlist 
+Below is a list of features I would like to add to my project, formatted using the MoSCoW method.
+
+### Must have
+- [X] Chat function with usernames
+- [X] Set user roles (question picker or player)
+- [X] Connect with Unsplash API
+- [X] Question picker can ask a question
+- [X] Players can answer that question
+- [X] Points system
+
+### Should have
+- [X] Different rounds, with a different question picker
+- [X] Multiple rooms support
+- [X] Scoreboard
+- [X] Join a room via the homepage
+- [X] Add nice styling
+- [ ] Add user onboarding information 
+
+### Could have
+- [ ] Connect to a database to store data
+- [ ] Let users buy hints
+- [ ] Let users skip rounds (when 1v1)
+
+### Would have
+- [ ] Create time-based rounds
+- [ ] The faster someone answers, the more points that person gets
+- [ ] Create public and private rooms
+- [ ] Join a public room with random users
+- [ ] Upload your own images as hints
+- [ ] Add video's as hints
+
+
+<br>
+
+## 🚴‍♂️ Data lifecycle Diagram
 ![image](https://user-images.githubusercontent.com/60745347/114989543-d1150c80-9e97-11eb-968b-b49cfa7563fb.png)
 
 <br>
 
-## API
+## 🐒 API
+For this project, I am using the **Unsplash API** to find photos for specified keywords. The Unsplash API is free. In development mode you are limited to making 50 requests per hour. Perfect for testing! When your application is finished, you can send a request to the team at Unsplash to increase the limit to production level. This allows you to make 5000 requests per hour. When you send the request, fill in all the necessary details so that the Unsplash team can check whether your app follows all the API rules. Approval of a request can take up to 10 business days. 
 
-### Data model
+### Get started
+**First,** request an API key from Unsplash. Copy the link below and click on the button "Register as a Developer"
+
+```
+https://unsplash.com/developers
+```
+
+**Next,** click on "New Application" to register your app (or use the link below). Accept the terms and conditions. 
+
+```
+https://unsplash.com/oauth/applications/new
+```
+
+**Finally,** you will now receive an Access Key and a Secret Key. In my app, I use the Access Key when sending requests to the API. For example, to search photos to go with a particular keyword, use the link below: 
+
+```
+https://api.unsplash.com/search/photos/?client_id=${API_KEY_HERE}&query=${SEARCH_KEYWORD_HERE}&order_by=popular
+```
+
+
+### API Data model
 ```
 API RESPONSE
 +-----------------------+
@@ -110,6 +166,11 @@ npm install
 ### Start local development environment
 ```
 npm run dev
+```
+
+### Navigate to localhost
+```
+http://localhost:3000/
 ```
 
 <br>
