@@ -58,67 +58,72 @@ function useSockets(server) {
             // Get game data for this room & index of user in the user array
             const currentGame = game[getRoomInfo(socket, game)];
             const userIndex = getUserIndex(currentGame, socket);
-    
-            // Check if user is question picker > send message to all sockets in the room
-            if(userIndex === currentGame.questionPicker) {
-                io.sockets.in(currentGame.roomId).emit('chat-message', { userName: socket.userName, message: message });
-            } 
-            else {
-                // Check if message is the correct answer
-                if(message.toLowerCase() === currentGame.correctAnswer) {
-                    // Set correctAnswer to empty string > add 10 points to the current user
-                    currentGame.correctAnswer = '';
-                    currentGame.users[userIndex].points += 10;
-    
-                    // To all users, except the current socket
-                    socket.to(currentGame.roomId).emit('server-message', { type: "correctAnswer", message: `🎉  ${socket.userName} guessed the answer (${message}) and gets +10 points!  🎉` });
-    
-                    // To the current socket
-                    socket.emit('server-message', { type: "correctAnswer", message: "🎉  You guessed the answer! +10 points for you, good job!  🎉" });
-                    
-                    // If less than 5 rounds
-                    if(currentGame.round < 5) {
-                        currentGame.round += 1;
-                        const newQuestionPickerIndex = currentGame.questionPicker+1;
-    
-                        // Set new question picker
-                        if(newQuestionPickerIndex < currentGame.users.length) {
-                            currentGame.questionPicker += 1;
-                        } else {
-                            currentGame.questionPicker = 0;
+
+            if(currentGame) {
+                // Check if user is question picker > send message to all sockets in the room
+                if(userIndex === currentGame.questionPicker) {
+                    io.sockets.in(currentGame.roomId).emit('chat-message', { userName: socket.userName, message: message });
+                } 
+                else {
+                    // Check if message is the correct answer
+                    if(message.toLowerCase() === currentGame.correctAnswer) {
+                        // Set correctAnswer to empty string > add 10 points to the current user
+                        currentGame.correctAnswer = '';
+                        currentGame.users[userIndex].points += 10;
+        
+                        // To all users, except the current socket
+                        socket.to(currentGame.roomId).emit('server-message', { type: "correctAnswer", message: `🎉  ${socket.userName} guessed the answer (${message}) and gets +10 points!  🎉` });
+        
+                        // To the current socket
+                        socket.emit('server-message', { type: "correctAnswer", message: "🎉  You guessed the answer! +10 points for you, good job!  🎉" });
+                        
+                        // If less than 5 rounds
+                        if(currentGame.round < 5) {
+                            currentGame.round += 1;
+                            const newQuestionPickerIndex = currentGame.questionPicker+1;
+        
+                            // Set new question picker
+                            if(newQuestionPickerIndex < currentGame.users.length) {
+                                currentGame.questionPicker += 1;
+                            } else {
+                                currentGame.questionPicker = 0;
+                            }
+        
+                            // To the new question picker
+                            io.to(currentGame.users[currentGame.questionPicker].userId).emit('questionPicker', { userInfo: currentGame.users[currentGame.questionPicker] });
+                            io.to(currentGame.users[currentGame.questionPicker].userId).emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
+        
+                            // To all users in this room
+                            currentGame.users.map(user => user.userId).filter(userId => userId != currentGame.users[currentGame.questionPicker].userId).forEach(userId => {
+                                io.to(userId).emit('server-message', { type: "newPicker", message: `👑 ${currentGame.users[currentGame.questionPicker].userName} is now the question picker!` });
+                            });
                         }
-    
-                        // To the new question picker
-                        io.to(currentGame.users[currentGame.questionPicker].userId).emit('questionPicker', { userInfo: currentGame.users[currentGame.questionPicker] });
-                        io.to(currentGame.users[currentGame.questionPicker].userId).emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
-    
-                        // To all users in this room
-                        currentGame.users.map(user => user.userId).filter(userId => userId != currentGame.users[currentGame.questionPicker].userId).forEach(userId => {
-                            io.to(userId).emit('server-message', { type: "newPicker", message: `👑 ${currentGame.users[currentGame.questionPicker].userName} is now the question picker!` });
-                        });
+                        else {
+                            // If more than 5 rounds, end the game and remove game data.
+                            io.sockets.in(currentGame.roomId).emit('game-ended', { users: currentGame.users });
+                            game.splice(getRoomInfo(socket, game), 1);
+                        }
+        
+                        // To all users in the room > update the score board
+                        io.sockets.in(currentGame.roomId).emit('userlist', { users: currentGame.users, questionPicker: currentGame.questionPicker, round: currentGame.round });  
                     }
                     else {
-                        // If more than 5 rounds, end the game and remove game data.
-                        io.sockets.in(currentGame.roomId).emit('game-ended', { users: currentGame.users }); 
-                        game.splice(getRoomInfo(socket, game), 1);
+                        // If the message is not the correct answer, just send it.
+                        io.sockets.in(currentGame.roomId).emit('chat-message', { userName: socket.userName, message: message });
                     }
-    
-                    // To all users in the room > update the score board
-                    io.sockets.in(currentGame.roomId).emit('userlist', { users: currentGame.users, questionPicker: currentGame.questionPicker, round: currentGame.round });  
                 }
-                else {
-                    // If the message is not the correct answer, just send it.
-                    io.sockets.in(currentGame.roomId).emit('chat-message', { userName: socket.userName, message: message });
-                }
+            }
+            else {
+                socket.emit('server-message', { type: "error", message: "⚠️ Something went wrong with sending your message. Try again or refresh the page." });
             }
         });
     
         // When question picker asks a question
         socket.on('question-asked', async (questionObj) => {
             const currentGame = game[getRoomInfo(socket, game)];
-    
+
             // If question picker is not the only player
-            if(currentGame.users.length > 1) {
+            if(currentGame && currentGame.users && currentGame.users.length > 1) {
 
                 // Check if all required fields are filled
                 if(questionObj.answer && questionObj.hint1 && questionObj.hint2) {
@@ -131,7 +136,7 @@ function useSockets(server) {
                     //const img2 = { results: [{urls: {thumb: "https://images.unsplash.com/photo-1557456170-0cf4f4d0d362?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyMjI4MDR8MHwxfHNlYXJjaHwxfHxsYWtlfGVufDB8fDF8fDE2MTgzMDYyOTA&ixlib=rb-1.2.1&q=80&w=200"}}] };
         
                     // If there are image results > Start the round 
-                    if(img1.results[0] && img2.results[0]) {
+                    if(img1 && img2 && img1.results && img2.results && img1.results[0] && img2.results[0]) {
                         io.sockets.in(currentGame.roomId).emit('start-round', { images: [img1.results[0].urls.thumb, img2.results[0].urls.thumb], userName: socket.userName });
                     } 
                     else {
@@ -155,34 +160,37 @@ function useSockets(server) {
             // If game exists
             if(existingGame != -1) {
                 const currentGame = game[existingGame];
-                const userIndex = getUserIndex(currentGame, socket);
+
+                if(currentGame) {
+                    const userIndex = getUserIndex(currentGame, socket);
                 
-                // Leave current room
-                socket.leave(currentGame.roomId);
-    
-                if(userIndex != -1) {
-                    // Remove user from Game data user array
-                    currentGame.users.splice(userIndex, 1);
-                    
-                    // Emit to all other sockets that this user left.
-                    socket.to(currentGame.roomId).emit('server-message', { type: "disconnected", message: `➡️ ${socket.userName} disconnected.`});
-    
-                    // If the leaving user was the question picker > make someone else the question picker
-                    if(currentGame.questionPicker === userIndex && currentGame.users.length != 0) {
-                        currentGame.questionPicker = 0;
-                        io.to(currentGame.users[0].userId).emit('questionPicker', { userInfo: currentGame.users[0] });
-                        io.to(currentGame.users[0].userId).emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
+                    // Leave current room
+                    socket.leave(currentGame.roomId);
+        
+                    if(userIndex != -1) {
+                        // Remove user from Game data user array
+                        currentGame.users.splice(userIndex, 1);
                         
-                        // To all users in this room
-                        currentGame.users.map(user => user.userId).filter(userId => userId != currentGame.users[currentGame.questionPicker].userId).forEach(userId => {
-                            io.to(userId).emit('server-message', { type: "newPicker", message: `👑 ${currentGame.users[currentGame.questionPicker].userName} is now the question picker!` });
-                        });
+                        // Emit to all other sockets that this user left.
+                        socket.to(currentGame.roomId).emit('server-message', { type: "disconnected", message: `➡️ ${socket.userName} disconnected.`});
+        
+                        // If the leaving user was the question picker > make someone else the question picker
+                        if(currentGame.questionPicker === userIndex && currentGame.users.length != 0) {
+                            currentGame.questionPicker = 0;
+                            io.to(currentGame.users[0].userId).emit('questionPicker', { userInfo: currentGame.users[0] });
+                            io.to(currentGame.users[0].userId).emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
+                            
+                            // To all users in this room
+                            currentGame.users.map(user => user.userId).filter(userId => userId != currentGame.users[currentGame.questionPicker].userId).forEach(userId => {
+                                io.to(userId).emit('server-message', { type: "newPicker", message: `👑 ${currentGame.users[currentGame.questionPicker].userName} is now the question picker!` });
+                            });
+                        }
+        
+                        // Update the scoreboard
+                        io.sockets.in(currentGame.roomId).emit('userlist', { users: currentGame.users, questionPicker: currentGame.questionPicker, round: currentGame.round });  
                     }
-    
-                    // Update the scoreboard
-                    io.sockets.in(currentGame.roomId).emit('userlist', { users: currentGame.users, questionPicker: currentGame.questionPicker, round: currentGame.round });  
                 }
-            } 
+            }
         });
     });
 }

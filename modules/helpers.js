@@ -15,15 +15,25 @@ function isValid(str){
  
 // Get index of current room from socket
 function getRoomInfo(socket, game) {
-    const room = Array.from(socket.rooms)[1];
-    const existingGame = game.map(game => game.roomId).indexOf(room);
-    return existingGame;
+    if(socket && game) {
+        const room = Array.from(socket.rooms)[1];
+        const existingGame = game.map(game => game.roomId).indexOf(room);
+        return existingGame;
+    }
+    else {
+        return -1;
+    }
 }
 
 // Get index of user data array for socket 
 function getUserIndex(currentGame, socket) {
-    const userIndex = currentGame.users.map(user => user.userId).indexOf(socket.id);
-    return userIndex;
+    if(currentGame && socket) {
+        const userIndex = currentGame.users.map(user => user.userId).indexOf(socket.id);
+        return userIndex;
+    }
+    else {
+        return -1;
+    }
 }
 
 module.exports = { getData, isValid, getRoomInfo, getUserIndex };
