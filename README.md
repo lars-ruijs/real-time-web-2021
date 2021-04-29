@@ -1,5 +1,5 @@
 # 🖼 ImgGeek
-I am planning to make a multi player game where the players take turns thinking of a topic that the other players have to guess. The player who comes up with the topic adds general pictures describing the subject. For example, when you come up with the topic of fishing, you could show pictures of water, a boat, and an aquarium. 
+I made a multi player game where the players take turns thinking of a topic that the other players have to guess. The player who comes up with the topic adds general pictures describing the subject. For example, when you come up with the topic of fishing, you could show pictures of water, a boat, and an aquarium. 
 
 **About this project**
 
@@ -8,6 +8,8 @@ This project is part of the Real-Time Applications course at CMD, part of the Am
 <br>
 
 ## ✨ View it live
+![imggeek-mockup](https://user-images.githubusercontent.com/60745347/116573331-fe889e00-a90c-11eb-830c-1afc73966f5c.jpg)
+
 View a live preview [here](https://imggeek.herokuapp.com/).
 
 <br>
@@ -15,23 +17,42 @@ View a live preview [here](https://imggeek.herokuapp.com/).
 ## ✏️ Concept sketches
 I came up with several variations on my concept before making a final choice. 
 
-### Drawing game
-Below is an outline of an idea where players have to take turns redrawing an image that comes from an API. The other players must then guess what the subject of the sketch is. 
+<details>
+  <summary>Drawing game</summary>
+  
+  <br>
+  
+  Below is an outline of an idea where players have to take turns redrawing an image that comes from an API. The other players must then guess what the subject of the sketch is. 
 
 ![IMG_3433](https://user-images.githubusercontent.com/60745347/114394022-03262600-9b9b-11eb-8268-9f2ab1831d53.JPG)
 
-### Image hints
-In this concept, players take turns thinking of a topic that the other players have to guess. The player who comes up with the topic adds general pictures describing the subject. Each player who successfully guesses the topic earns points. 
+</details>
+
+<details>
+  <summary>Image hints</summary>
+  
+  <br>
+  
+  In this concept, players take turns thinking of a topic that the other players have to guess. The player who comes up with the topic adds general pictures describing the subject. Each player who successfully guesses the topic earns points. 
 
 ![IMG_3432](https://user-images.githubusercontent.com/60745347/114394030-06b9ad00-9b9b-11eb-857c-2a4a16f5b407.JPG)
 
-### Computer player
-In this concept, players play against a computer. Each round, the computer searches for an image and displays possible topics for that image below it. The player who guesses the correct topic the fastest wins the round. 
+</details>
+
+<details>
+  <summary>Computer player</summary>
+  
+  <br>
+  
+ In this concept, players play against a computer. Each round, the computer searches for an image and displays possible topics for that image below it. The player who guesses the correct topic the fastest wins the round. 
 
 ![IMG_3431](https://user-images.githubusercontent.com/60745347/114394034-08837080-9b9b-11eb-9bc6-69db62e7e96b.JPG)
 
+</details>
+
+
 ### Chosen concept
-I chose the second concept (image hints) because I think it would be an interesting project to work on. Because users are allowed to take turns in coming up with a question, the game remains exciting. In addition, the person asking the question does not know in advance which image will be selected as a hint, so he has to think carefully about which keywords to use. 
+I chose the second concept (image hints) because I think it would be an interesting project to work on. Users are allowed to take turns in coming up with a question. This ensures that the game remains exciting. In addition, the person asking the question does not know in advance which image will be selected as a hint, so he has to think carefully about which keywords to use. 
 
 <br>
 
@@ -97,6 +118,7 @@ https://unsplash.com/oauth/applications/new
 https://api.unsplash.com/search/photos/?client_id=${API_KEY_HERE}&query=${SEARCH_KEYWORD_HERE}&order_by=popular
 ```
 
+<br>
 
 ### API Data model
 ```
@@ -176,11 +198,21 @@ http://localhost:3000/
 <br>
 
 ## 📚 Sources
-So far, I have used the following sources while working on this project:
+I have used the following sources while working on this project:
 
-- **Socket.io cheatsheet** [link](https://socket.io/docs/v3/emit-cheatsheet/index.html)
-- **Socket.io rooms** [link](https://socket.io/docs/v4/rooms/)
-- **Difference between io.sockets.in emit and sockets.broadcast.emit** [link](https://stackoverflow.com/questions/10342681/whats-the-difference-between-io-sockets-emit-and-broadcast) 
+- **Unsplash API** documentation used for getting image results for a given keyword. Read the documentation [here](https://unsplash.com/documentation#search-photos);
+- **Socket.io cheatsheet** with information about how events work between server and client. Read more [here](https://socket.io/docs/v3/emit-cheatsheet/index.html);
+- **Socket.io rooms** information about applying room functionality within socket.io. Code examples used from [the docs](https://socket.io/docs/v4/rooms/);
+- **Difference between io.sockets.in emit and sockets.broadcast.emit** when emitting events in a room with users. Answered by StackOverflow user Jayantha Lal Sirisena. Read the answer [here](https://stackoverflow.com/questions/10342681/whats-the-difference-between-io-sockets-emit-and-broadcast);
+- **How to emit an event to a specific socket** code example used from an answer on Edureka by user Niroj. View it [here](https://www.edureka.co/community/67618/how-can-i-send-a-message-to-a-particular-client-with-socket-io);
+- **Check if username doesn't contain special characters** a RegEx code example used from an answer by user Kooilnc on [StackOverflow](https://stackoverflow.com/questions/11896599/javascript-code-to-check-special-characters/11896930).
+- **Implement DOTENV** for storing server side secrets. Documentation used from [NPM](https://www.npmjs.com/package/dotenv);
+- **Force HTTPS connection** article on how to implement HTTPS redirect with ExpressJS from [Divio](https://docs.divio.com/en/latest/how-to/node-express-force-https/);
+- **Sort numbers from highest to lowest** to display user scores in the right order using sort(). Code example used from [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort);
+- **Canvas-confetti** external package for displaying confetti. Code example used from the [NPM](https://www.npmjs.com/package/canvas-confetti#examples) documentation;
+- **Generate UUID** using an external NPM package. Code examples used from the [documentation](https://www.npmjs.com/package/uuid) (including code examples about UUID validation);
+- **MacBook Pro on wooden Desk** mockup via [MockupWorld](https://www.mockupworld.co/free/macbook-pro-on-wooden-desk-mockup/).
+
  
 <br>
 
