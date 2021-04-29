@@ -14,6 +14,24 @@ View a live preview [here](https://imggeek.herokuapp.com/).
 
 <br>
 
+<hr>
+
+## 📑 Table of Contents
+|  Contents |
+|---|
+| [✏️ Concept sketches](#%EF%B8%8F-concept-sketches)  |
+| [🧞 Wishlist](#-wishlist)  |
+| [📌 Features](#-features)  |
+| [🚴‍♂️ Data lifecycle Diagram](#%EF%B8%8F-data-lifecycle-diagram) |
+| [🐒 API](#-api) |
+| [⬇️ How to install](#%EF%B8%8F-how-to-install)  |
+| [📚 Sources](#-sources) |
+| [🔗 License](#-license) |
+
+<hr>
+
+<br>
+
 ## ✏️ Concept sketches
 I came up with several variations on my concept before making a final choice. 
 
@@ -91,8 +109,34 @@ Below is a list of features I would like to add to my project, formatted using t
 
 <br>
 
-## 🚴‍♂️ Data lifecycle Diagram
-![image](https://user-images.githubusercontent.com/60745347/114989543-d1150c80-9e97-11eb-968b-b49cfa7563fb.png)
+## 📌 Features
+
+- **Multiple Rooms:** users can create their own room and share it with friends.
+
+<img src="https://user-images.githubusercontent.com/60745347/116583049-3b0cc780-a916-11eb-8f21-d22408f300e3.png" width="40%" margin="2em 0" /> 
+
+- **Join Rooms:** users can join rooms via a shared URL or via a shared game code. 
+- **Usernames:** players can set their own username.
+- **Different user roles:** users become question picker or guesser in turn. 
+- **Ask questions:** the designated question picker can ask a question that the other players can guess. In doing so, the question picker provides two keywords for which images are searched via the Unsplash API.
+- **Earn points:** players can earn points if they can guess the correct topic of the images;
+
+<img src="https://user-images.githubusercontent.com/60745347/116596681-f9cfe400-a924-11eb-9601-737df0de7f9c.png" width="60%" margin="2em 0" /> 
+
+- **Scoreboard:** the scores of players are displayed live on a scoreboard;
+
+<img src="https://user-images.githubusercontent.com/60745347/116589555-0cdeb600-a91d-11eb-9d7a-d23f59008a32.png" width="20%" margin="2em 0" /> 
+
+- **User chat:** users can send messages to each other during the game. Also, the question picker can send messages to the other players after starting a round.
+- **End screen:** after five rounds, the game ends and the player with the most points becomes the winner!
+
+<img src="https://user-images.githubusercontent.com/60745347/116590929-95118b00-a91e-11eb-9ee3-65d0f479a337.png" width="60%" margin="2em 0" /> 
+   
+
+<br>
+
+## 🚴‍♂️ Data Lifecycle Diagram
+![Web 1920 – 1](https://user-images.githubusercontent.com/60745347/116580856-10ba0a80-a914-11eb-9d3f-1c125f095f26.jpg)
 
 <br>
 
@@ -100,17 +144,22 @@ Below is a list of features I would like to add to my project, formatted using t
 For this project, I am using the **Unsplash API** to find photos for specified keywords. The Unsplash API is free. In development mode you are limited to making 50 requests per hour. Perfect for testing! When your application is finished, you can send a request to the team at Unsplash to increase the limit to production level. This allows you to make 5000 requests per hour. When you send the request, fill in all the necessary details so that the Unsplash team can check whether your app follows all the API rules. Approval of a request can take up to 10 business days. 
 
 ### Get started
+
 **First,** request an API key from Unsplash. Copy the link below and click on the button "Register as a Developer"
 
 ```
 https://unsplash.com/developers
 ```
 
+<br>
+
 **Next,** click on "New Application" to register your app (or use the link below). Accept the terms and conditions. 
 
 ```
 https://unsplash.com/oauth/applications/new
 ```
+
+<br>
 
 **Finally,** you will now receive an Access Key and a Secret Key. In my app, I use the Access Key when sending requests to the API. For example, to search photos to go with a particular keyword, use the link below: 
 
