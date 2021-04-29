@@ -168,12 +168,13 @@ function useSockets(server) {
                     if(userIndex != -1) {
                         // Remove user from Game data user array
                         currentGame.users.splice(userIndex, 1);
-                        
+
                         // Emit to all other sockets that this user left.
                         socket.to(currentGame.roomId).emit('server-message', { type: "disconnected", message: `➡️ ${socket.userName} disconnected.`});
         
                         // If the leaving user was the question picker > make someone else the question picker
                         if(currentGame.questionPicker === userIndex && currentGame.users.length != 0) {
+                            console.log("user was de question picker");
                             currentGame.questionPicker = 0;
                             io.to(currentGame.users[0].userId).emit('questionPicker', { userInfo: currentGame.users[0] });
                             io.to(currentGame.users[0].userId).emit('server-message', { type: "pickerInfo", message: "You are the question picker! Think of a subject that the other players need to guess. Add two related keywords that determine which images are shown as hints." });
@@ -182,6 +183,10 @@ function useSockets(server) {
                             currentGame.users.map(user => user.userId).filter(userId => userId != currentGame.users[currentGame.questionPicker].userId).forEach(userId => {
                                 io.to(userId).emit('server-message', { type: "newPicker", message: `👑 ${currentGame.users[currentGame.questionPicker].userName} is now the question picker!` });
                             });
+                        }
+                        else if(currentGame.questionPicker != 0 && userIndex < currentGame.questionPicker) {
+                            // Substract 1 from questionPicker index
+                            currentGame.questionPicker -= 1;
                         }
         
                         // Update the scoreboard
